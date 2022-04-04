@@ -27,8 +27,8 @@ class MyTools(Base):
     __tablename__ = 'my_tools'
 
     id = Column(Integer, primary_key=True)
-    tool_id = Column(Integer, ForeignKey='tools.id')
-    owner_id = Column(Integer, ForeignKey='users.id')
+    tool_id = Column(Integer, ForeignKey('tools.id'))
+    owner_id = Column(Integer, ForeignKey('users.id'))
     asset_id = Column(Integer, unique=True)
     owner = Column(String)
     durability = Column(Integer)

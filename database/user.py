@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, create_engine, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
+engine = create_engine('sqlite:///farmersworld.db')
 
 
 class User(Base):
@@ -17,7 +18,7 @@ class Energy(Base):
     __tablename__ = 'energies'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey='users.id', unique=True)
+    user_id = Column(Integer, ForeignKey('users.id', unique=True))
     energy = Column(Integer)
     max_energy = Column(Integer)
 
