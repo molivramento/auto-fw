@@ -1,22 +1,22 @@
 import requests
 
 
-class Fetch:
+class Request:
     def __init__(self, api, contract):
         self.api = api
         self.contract = contract
 
-    def fetch(self, table, index_position=1, key_type='"i64"', user=None):
+    def fetch(self, table, index_position=1, key_type='i64', user=''):
         headers = {'authority': f'{self.api}'}
         data = f'{{' \
                f'"json":true,' \
-               f'"code":{self.contract},' \
-               f'"scope":{self.contract},' \
-               f'"table":{table},' \
-               f'"lower_bound":{user},' \
-               f'"upper_bound":{user},' \
+               f'"code":"{self.contract}",' \
+               f'"scope":"{self.contract}",' \
+               f'"table":"{table}",' \
+               f'"lower_bound":"{user}",' \
+               f'"upper_bound":"{user}",' \
                f'"index_position":{index_position},' \
-               f'"key_type":{key_type},' \
+               f'"key_type":"{key_type}",' \
                f'"limit":"100",' \
                f'"reverse":false,' \
                f'"show_payer":false' \
