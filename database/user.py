@@ -8,7 +8,7 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    account = Column(String)
+    account = Column(String, unique=True)
     energies = relationship('Energy')
     balances = relationship('Balance')
 
@@ -17,7 +17,7 @@ class Energy(Base):
     __tablename__ = 'energies'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey='users.id')
+    user_id = Column(Integer, ForeignKey='users.id', unique=True)
     energy = Column(Integer)
     max_energy = Column(Integer)
 
