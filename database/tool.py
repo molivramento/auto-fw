@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine
 from sqlalchemy.orm import declarative_base, relationship
+from database.user import User
 
 Base = declarative_base()
+engine = create_engine('sqlite:///../database//database.db', future=True)
 
 
 class Tool(Base):
@@ -28,13 +30,15 @@ class MyTools(Base):
 
     id = Column(Integer, primary_key=True)
     tool_id = Column(Integer, ForeignKey('tools.id'))
-    owner_id = Column(Integer, ForeignKey('users.id'))
+    owner_id = Column(Integer, ForeignKey(User.id))
     asset_id = Column(Integer, unique=True)
     owner = Column(String)
     durability = Column(Integer)
     current_durability = Column(Integer, nullable=True)
     next_availability = Column(Integer, nullable=True)
 
+
+Base.metadata.create_all(engine)
 
 if __name__ == '__main__':
     from utils.api import Request

@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, create_engine, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
-engine = create_engine('sqlite:///farmersworld.db')
+engine = create_engine('sqlite:///../database/database.db', future=True)
 
 
 class User(Base):
@@ -18,7 +18,7 @@ class Energy(Base):
     __tablename__ = 'energies'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id', unique=True))
+    user_id = Column(Integer, ForeignKey('users.id'), unique=True)
     energy = Column(Integer)
     max_energy = Column(Integer)
 
@@ -27,11 +27,13 @@ class Balance(Base):
     __tablename__ = 'balances'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey='users.id')
+    user_id = Column(Integer, ForeignKey('users.id'))
     wood = Column(Float)
     food = Column(Float)
     gold = Column(Float)
 
+
+Base.metadata.create_all(engine)
 
 if __name__ == '__main__':
     from utils.api import Request
