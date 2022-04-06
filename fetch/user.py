@@ -20,11 +20,16 @@ def get_user():
                 else:
                     balance['FOOD'] = amount
             try:
-                user_id = session.scalars(select(User).where(User.account == r['account'])).one()
-                user_id.energy = r['energy']
-                user_id.wood = balance.get('WOOD')
-                user_id.gold = balance.get('GOLD')
-                user_id.food = balance.get('FOOD')
+                user = session.scalars(select(User)
+                                       .where(User.account == r['account'])).one()
+                energy_id = session.scalars(select(Energy)
+                                            .where(Energy.user_id == user.id)).one()
+                balance_id = session.scalars((select(Balance)
+                                              .where(Balance.user_id == user.id))).one()
+                energy_id.energy = r['energy']
+                balance_id.wood = balance.get('WOOD')
+                balance_id.gold = balance.get('GOLD')
+                balance_id.food = balance.get('FOOD')
                 session.commit()
             except:
                 user = User(account=r['account'],

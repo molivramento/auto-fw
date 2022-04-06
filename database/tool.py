@@ -30,7 +30,6 @@ class MyTools(Base):
 
     id = Column(Integer, primary_key=True)
     tool_id = Column(Integer, ForeignKey('tools.id'))
-    owner_id = Column(Integer, ForeignKey(User.id))
     asset_id = Column(Integer, unique=True)
     owner = Column(String)
     durability = Column(Integer)
@@ -43,5 +42,5 @@ Base.metadata.create_all(engine)
 if __name__ == '__main__':
     from utils.api import Request
     c = Request('wax.eosrio.io', 'farmersworld')
-    response = c.fetch(table='toolconfs')
+    response = c.fetch(table='tools', user='molivramento', index_position=2)
     print(response)
