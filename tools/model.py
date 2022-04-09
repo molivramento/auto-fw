@@ -1,9 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine
-from sqlalchemy.orm import declarative_base, relationship
-from database.user import User
-
-Base = declarative_base()
-engine = create_engine('sqlite:///../database//database.db', future=True)
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from database import Base, engine
 
 
 class Tool(Base):
@@ -22,25 +19,21 @@ class Tool(Base):
     mints_gold = Column(Float)
     mints_wood = Column(Float)
     charged_time = Column(Integer)
-    my_tools = relationship('MyTools')
+    my_tools = relationship('MyTool', back_populates='tools')
 
 
-class MyTools(Base):
+class MyTool(Base):
     __tablename__ = 'my_tools'
 
     id = Column(Integer, primary_key=True)
-    tool_id = Column(Integer, ForeignKey('tools.id'))
     asset_id = Column(Integer, unique=True)
+    tool_id = Column(Integer, ForeignKey('tools.id'))
     owner = Column(String)
     durability = Column(Integer)
     current_durability = Column(Integer, nullable=True)
     next_availability = Column(Integer, nullable=True)
 
+    tools = relationship('Tool', back_populates='my_tools')
+
 
 Base.metadata.create_all(engine)
-
-if __name__ == '__main__':
-    from utils.api import Request
-    c = Request('wax.eosrio.io', 'farmersworld')
-    response = c.fetch(table='tools', user='molivramento', index_position=2)
-    print(response)

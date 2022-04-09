@@ -23,3 +23,9 @@ class Request:
                f'}}'
         response = requests.post(f'https://{self.api}/v1/chain/get_table_rows', headers=headers, data=data)
         return response.json()
+
+
+if __name__ == '__main__':
+    c = Request('wax.eosrio.io', 'farmersworld')
+    response = c.fetch(table='mbsconf')
+    print(response)

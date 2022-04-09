@@ -1,8 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine
-from sqlalchemy.orm import declarative_base, relationship
-
-Base = declarative_base()
-engine = create_engine('sqlite:///../database/database.db', future=True)
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from database import Base, engine
 
 
 class User(Base):
@@ -10,8 +8,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     account = Column(String, unique=True)
-    energies = relationship('Energy')
-    balances = relationship('Balance')
+    energies = relationship('Energy', back_populates='owner')
+    balances = relationship('Balance', back_populates='owner')
 
 
 class Energy(Base):
@@ -21,6 +19,8 @@ class Energy(Base):
     user_id = Column(Integer, ForeignKey('users.id'), unique=True)
     energy = Column(Integer)
     max_energy = Column(Integer)
+
+    owner = relationship("User", back_populates="energies")
 
 
 class Balance(Base):
@@ -32,11 +32,7 @@ class Balance(Base):
     food = Column(Float)
     gold = Column(Float)
 
+    owner = relationship("User", back_populates="balances")
+
 
 Base.metadata.create_all(engine)
-
-if __name__ == '__main__':
-    from utils.api import Request
-    c = Request('wax.eosrio.io', 'farmersworld')
-    response = c.fetch(table='accounts', user='molivramento')
-    print(response)
