@@ -20,3 +20,4 @@ def verify_durability():
                 name = 'repair'
                 data = {'asset_owner': mt.owner, 'asset_id': mt.asset_id}
                 asyncio.get_event_loop().run_until_complete(action.claim(name, data))
+                print('Ready to use tool!')
