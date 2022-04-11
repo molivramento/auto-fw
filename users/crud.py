@@ -12,7 +12,6 @@ class Users:
         self.response = c.fetch(table='accounts', user='molivramento')
 
     def create(self):
-        response = c.fetch(table='accounts', user='molivramento')
         for r in self.response['rows']:
             with Session(engine) as session:
                 balance = Users.balances(self)
@@ -26,11 +25,10 @@ class Users:
                     session.add(user)
                     session.commit()
                 except:
-                    session.close()
+                    print(f'{r["account"]} already exists in the data base')
 
     def update(self):
-        response = c.fetch(table='accounts', user='molivramento')
-        for r in response['rows']:
+        for r in self.response['rows']:
             with Session(engine) as session:
                 balance = Users.balances(self)
                 user = session.scalars(select(User)
@@ -43,7 +41,6 @@ class Users:
                 balance_id.wood = balance.get('WOOD')
                 balance_id.gold = balance.get('GOLD')
                 balance_id.food = balance.get('FOOD')
-                session.commit()
 
     def balances(self):
         for r in self.response['rows']:
