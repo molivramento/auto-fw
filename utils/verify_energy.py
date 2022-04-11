@@ -23,7 +23,3 @@ def verify_energy():
             recover_amount = energy.max_energy - energy.energy
             data = {'owner': user_id.account, 'energy_recovered': recover_amount}
             asyncio.get_event_loop().run_until_complete(action.claim(name, data))
-        else:
-            print(f'Current energy: {energy.energy}')
-        session.commit()
-        session.close()
