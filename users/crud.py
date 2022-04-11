@@ -24,8 +24,11 @@ class Users:
                 try:
                     session.add(user)
                     session.commit()
+                    print(f'{r["account"]} add in database')
+                    print(f'Balances: WOOD:{balance.get("WOOD")} GOLD:{balance.get("GOLD")} FOOD:{balance.get("FOOD")}')
                 except:
                     print(f'{r["account"]} already exists in the data base')
+                    print(f'Balances: WOOD:{balance.get("WOOD")} GOLD:{balance.get("GOLD")} FOOD:{balance.get("FOOD")}')
 
     def update(self):
         for r in self.response['rows']:
