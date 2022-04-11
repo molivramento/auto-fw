@@ -19,6 +19,7 @@ def verify_energy():
         energy = session.scalars(select(Energy)
                                  .where(Energy.user_id == user_id.id)).one()
         if energy.energy < energy.max_energy * 0.2:
+            print(F'Current energy: {energy.energy} recovering... \n new current energy: {energy.max_energy}')
             name = 'recover'
             recover_amount = energy.max_energy - energy.energy
             data = {'owner': user_id.account, 'energy_recovered': recover_amount}
