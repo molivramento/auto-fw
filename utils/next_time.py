@@ -1,37 +1,39 @@
 from mbs.model import MyMbs
+from mbs.crud import MyMbss
 from tools.model import MyTool
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from database import engine
 from actions import Action
 import time
-from tools.crud import MyTools
 import datetime
 
 action = Action()
-ms = MyTools()
+my_mbs = MyMbss()
 
 
 def mbs_amount(t):
     with Session(engine) as session:
-        my_mbs = session.scalars(select(MyMbs)).all()
+        mbs = session.scalars(select(MyMbs)).all()
         saved_claims = 0
-        for m in my_mbs:
+        for m in mbs:
             if m.mbs.type == t:
                 saved_claims += m.mbs.saved_claims
-        session.commit()
         return saved_claims
 
 
-def mbs_next_time(t):
-    ...
+def mbs_next_time():
+    with Session(engine) as session:
+        my_mbs.update()
+        mbs_min = session.scalars(select(func.min(MyMbs.next_availability))).first()
+        return mbs_min
 
 
 def tool_next_time():
     with Session(engine) as session:
-        ms.update()
+        mbs = mbs_next_time()
         my_tools = session.scalars(select(MyTool)).all()
-        next_time = int(f'{time.time():.0f}') + 90000
+        next_time = mbs.next_availability  # int(f'{time.time():.0f}') + 90000
         asset_id = None
         owner = ''
         template_name = ''
@@ -43,8 +45,8 @@ def tool_next_time():
                 asset_id = mt.asset_id
                 owner = mt.owner
                 template_name = mt.tools.template_name
-                session.commit()
-        print(f'{asset_id} | {template_name} -> {datetime.datetime.fromtimestamp(next_time).strftime("%H:%M:%S")}')
+        print(f'ASSET ID       -> {asset_id} \n'
+              f'TEMPLATE NAME  -> {template_name} \n'
+              f'TIME ACTION    -> {datetime.datetime.fromtimestamp(next_time).strftime("%H:%M:%S")}')
         data = {'next_time': next_time, 'owner': owner, 'asset_id': asset_id}
-        session.commit()
         return data

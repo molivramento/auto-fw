@@ -36,20 +36,29 @@ class MyMbss:
         self.response = c.fetch(table='mbs', user='molivramento', index_position=2)
 
     def create(self):
-            for r in self.response['rows']:
-                with Session(engine) as session:
-                    mbs = session.scalars(select(Mbs)
-                                          .where(Mbs.template_id == r['template_id'])).one()
-                    my_mbs = MyMbs(mbs_id=mbs.id,
-                                   asset_id=r['asset_id'],
-                                   owner=r['owner'],
-                                   unstaking_time=r['unstaking_time'],
-                                   next_availability=r['next_availability'])
-                    try:
-                        session.add(my_mbs)
-                        session.commit()
-                    except:
-                        session.close()
+        for r in self.response['rows']:
+            with Session(engine) as session:
+                mbs = session.scalars(select(Mbs)
+                                      .where(Mbs.template_id == r['template_id'])).one()
+                my_mbs = MyMbs(mbs_id=mbs.id,
+                               asset_id=r['asset_id'],
+                               owner=r['owner'],
+                               unstaking_time=r['unstaking_time'],
+                               next_availability=r['next_availability'])
+                try:
+                    session.add(my_mbs)
+                    session.commit()
+                except:
+                    session.close()
+
+    def update(self):
+        for r in self.response['rows']:
+            with Session(engine) as session:
+                my_mbs = session.scalars(select(MyMbs)
+                                         .where(MyMbs.asset_id == r['asset_id'])).one()
+                my_mbs.unstaking_time = r['unstaking_time']
+                my_mbs.next_availability = r['next_availability']
+                session.commit()
 
     def delete(self):
         with Session(engine) as session:

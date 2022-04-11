@@ -2,3 +2,4 @@ venv/
 .idea
 .env
 farmersworld.db
+structure_response.py
