@@ -46,6 +46,7 @@ def tool_next_time():
                 next_time = full_time
                 asset_id = mt.asset_id
                 owner = mt.owner
+                schema_name = mt.tools.schema_name
                 template_name = mt.tools.template_name
         print(f'ASSET ID       -> {asset_id} \n'
               f'TEMPLATE NAME  -> {template_name} \n'
