@@ -5,7 +5,6 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from database import engine
 from actions import Action
-import time
 import datetime
 
 action = Action()
@@ -26,17 +25,19 @@ def mbs_next_time():
     with Session(engine) as session:
         my_mbs.update()
         mbs_min = session.scalars(select(func.min(MyMbs.next_availability))).first()
-        return mbs_min
+        mbs = session.scalars(select(MyMbs)
+                              .where(MyMbs.next_availability == mbs_min)).one()
+        return mbs, mbs.mbs.name
 
 
 def tool_next_time():
     with Session(engine) as session:
-        mbs = mbs_next_time()
+        mbs, mbs_name = mbs_next_time()
         my_tools = session.scalars(select(MyTool)).all()
         next_time = mbs.next_availability  # int(f'{time.time():.0f}') + 90000
-        asset_id = None
-        owner = ''
-        template_name = ''
+        asset_id = mbs.asset_id
+        owner = mbs.owner
+        template_name = mbs_name
         for mt in my_tools:
             mbs = mbs_amount(mt.tools.type)
             full_time = mt.next_availability + (mbs * mt.tools.charged_time)
