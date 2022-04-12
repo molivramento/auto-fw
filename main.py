@@ -41,7 +41,10 @@ class Run:
         Run.schedule(self, data)
 
     def claim(self, d):
-        name = 'claim'
+        if d['schema_name'] == 'mbs':
+            name = 'mbsclaim'
+        else:
+            name = 'claim'
         data = {'owner': d['owner'], 'asset_id': d['asset_id']}
         act = action.claim(name, data)
         claim = asyncio.get_event_loop().run_until_complete(act)

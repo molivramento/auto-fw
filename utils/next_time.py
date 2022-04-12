@@ -27,17 +27,18 @@ def mbs_next_time():
         mbs_min = session.scalars(select(func.min(MyMbs.next_availability))).first()
         mbs = session.scalars(select(MyMbs)
                               .where(MyMbs.next_availability == mbs_min)).one()
-        return mbs, mbs.mbs.name
+        return mbs, mbs.mbs
 
 
 def tool_next_time():
     with Session(engine) as session:
-        mbs, mbs_name = mbs_next_time()
+        m_mbs, mbs = mbs_next_time()
         my_tools = session.scalars(select(MyTool)).all()
-        next_time = mbs.next_availability  # int(f'{time.time():.0f}') + 90000
-        asset_id = mbs.asset_id
-        owner = mbs.owner
-        template_name = mbs_name
+        next_time = m_mbs.next_availability  # int(f'{time.time():.0f}') + 90000
+        asset_id = m_mbs.asset_id
+        owner = m_mbs.owner
+        template_name = mbs.name
+        schema_name = 'mbs'
         for mt in my_tools:
             mbs = mbs_amount(mt.tools.type)
             full_time = mt.next_availability + (mbs * mt.tools.charged_time)
@@ -49,5 +50,5 @@ def tool_next_time():
         print(f'ASSET ID       -> {asset_id} \n'
               f'TEMPLATE NAME  -> {template_name} \n'
               f'TIME ACTION    -> {datetime.datetime.fromtimestamp(next_time).strftime("%H:%M:%S")}')
-        data = {'next_time': next_time, 'owner': owner, 'asset_id': asset_id}
+        data = {'next_time': next_time, 'owner': owner, 'asset_id': asset_id, 'schema_name': schema_name}
         return data

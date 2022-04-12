@@ -50,7 +50,7 @@ class MyMbss:
                     session.add(my_mbs)
                     session.commit()
                 except:
-                    pass
+                    session.rollback()
 
     def update(self):
         for r in self.response['rows']:
