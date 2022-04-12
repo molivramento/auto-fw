@@ -31,12 +31,14 @@ class Run:
             my_mbs.create()
         Run.next_time(self)
 
-    def verify(self):
-        verify_energy()
-        verify_durability()
+    # def verify(self):
+    #     verify_energy()
+    #     verify_durability()
 
     def next_time(self):
-        Run.verify(self)
+        # Run.verify(self)
+        verify_energy()
+        verify_durability()
         data = tool_next_time()
         Run.schedule(self, data)
 
@@ -51,7 +53,7 @@ class Run:
         schedule.clear()
         if claim:
             verify_energy()
-        Run.start(self)
+        Run.next_time(self)
 
     def schedule(self, data):
         nt = datetime.datetime.fromtimestamp(data['next_time']).strftime('%H:%M:%S')
