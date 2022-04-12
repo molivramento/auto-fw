@@ -3,8 +3,9 @@ from users.model import User, Energy, Balance
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database import engine
+from utils.setup import api
 
-c = Request('wax.eosrio.io', 'farmersworld')
+c = Request(api, 'farmersworld')
 
 
 class Users:
@@ -44,6 +45,7 @@ class Users:
                 balance_id.wood = balance.get('WOOD')
                 balance_id.gold = balance.get('GOLD')
                 balance_id.food = balance.get('FOOD')
+                session.commit()
 
     def balances(self):
         for r in self.response['rows']:

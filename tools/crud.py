@@ -3,8 +3,9 @@ from tools.model import Tool, MyTool
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database import engine
+from utils.setup import api
 
-c = Request('wax.eosrio.io', 'farmersworld')
+c = Request(api, 'farmersworld')
 
 
 class ToolConfs:
@@ -55,7 +56,7 @@ class MyTools:
                     session.add(my_tool)
                     session.commit()
                 except:
-                    session.rollback()
+                    session.close()
 
     def update(self):
         response = c.fetch(table='tools', user='molivramento', index_position=2)

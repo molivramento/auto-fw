@@ -3,8 +3,9 @@ from mbs.model import Mbs, MyMbs
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database import engine
+from utils.setup import api
 
-c = Request('wax.eosrio.io', 'farmersworld')
+c = Request(api, 'farmersworld')
 
 
 class MbsConf:
@@ -49,7 +50,7 @@ class MyMbss:
                     session.add(my_mbs)
                     session.commit()
                 except:
-                    session.close()
+                    pass
 
     def update(self):
         for r in self.response['rows']:
