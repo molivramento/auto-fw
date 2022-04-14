@@ -25,10 +25,11 @@ class Run:
         toolconfs.create()
         my_tools.create()
         mbs.create()
+        my_mbs.create()
         try:
             my_mbs.delete()
         except:
-            my_mbs.create()
+            pass
         Run.next_time(self)
 
     def next_time(self):
