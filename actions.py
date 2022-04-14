@@ -22,11 +22,9 @@ class Action:
         )
         try:
             p = await rpc.sign_and_push_transaction(transaction, keys=[account.key])
-            try:
+            if name == 'claim':
                 print(p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards'])
-            except Exception as e:
-                print(e)
-            return True
+            else:
+                print(p)
         except Exception as e:
             print(e)
-            return False

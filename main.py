@@ -31,12 +31,7 @@ class Run:
             my_mbs.create()
         Run.next_time(self)
 
-    # def verify(self):
-    #     verify_energy()
-    #     verify_durability()
-
     def next_time(self):
-        # Run.verify(self)
         verify_energy()
         verify_durability()
         data = tool_next_time()

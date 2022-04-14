@@ -52,4 +52,4 @@ def tool_next_time():
               f'TEMPLATE NAME  -> {template_name} \n'
               f'TIME ACTION    -> {datetime.datetime.fromtimestamp(next_time).strftime("%H:%M:%S")}')
         data = {'next_time': next_time, 'owner': owner, 'asset_id': asset_id, 'schema_name': schema_name}
-        return data
+    return data
