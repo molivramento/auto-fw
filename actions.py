@@ -1,3 +1,6 @@
+import datetime
+import time
+
 from aioeos import EosAccount, EosAction, EosJsonRpc, EosTransaction
 import utils.setup as setup
 from tools.crud import MyTools
@@ -23,7 +26,8 @@ class Action:
         try:
             p = await rpc.sign_and_push_transaction(transaction, keys=[account.key])
             if name == 'claim':
-                print(p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards'])
+                print(f"{datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S')} - "
+                      f"{p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards']}")
             else:
                 print(p)
         except Exception as e:

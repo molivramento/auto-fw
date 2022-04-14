@@ -30,33 +30,27 @@ class Run:
             my_mbs.delete()
         except:
             pass
-        Run.next_time(self)
+        Run.schedule(self)
 
     def next_time(self):
         verify_energy()
         verify_durability()
-        data = tool_next_time()
-        Run.schedule(self, data)
+        return tool_next_time()
 
-    def claim(self, d):
-        if d['schema_name'] == 'mbs':
-            name = 'mbsclaim'
-        else:
-            name = 'claim'
-        data = {'owner': d['owner'], 'asset_id': d['asset_id']}
-        act = action.claim(name, data)
-        claim = asyncio.get_event_loop().run_until_complete(act)
-        schedule.clear()
-        if claim:
-            verify_energy()
-        Run.next_time(self)
+    def claim(self):
+        next_time_items = Run.next_time(self)
+        for nti in next_time_items:
+            if nti['schema_name'] == 'mbs':
+                name = 'mbsclaim'
+            else:
+                name = 'claim'
+            data = {'owner': nti['owner'], 'asset_id': nti['asset_id']}
+            act = action.claim(name, data)
+            asyncio.get_event_loop().run_until_complete(act)
 
-    def schedule(self, data):
-        nt = datetime.datetime.fromtimestamp(data['next_time']).strftime('%H:%M:%S')
-        now = int(f'{time.time():.0f}')
-        if data['next_time'] < now:
-            nt = datetime.datetime.fromtimestamp(time.time() + 5).strftime('%H:%M:%S')
-        schedule.every().day.at(nt).do(Run.claim, self, data)
+    def schedule(self):
+        schedule.every(30).seconds.do(Run.claim, self)
+
         while True:
             schedule.run_pending()
             time.sleep(1)
