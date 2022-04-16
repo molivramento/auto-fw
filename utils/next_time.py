@@ -1,8 +1,9 @@
+import datetime
 import time
 from mbs.model import MyMbs
 from mbs.crud import MyMbss
 from tools.model import MyTool
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database import engine
 from actions import Action
@@ -22,11 +23,11 @@ def mbs_amount(t):
 
 
 def tool_next_time():
+    my_mbs.update()
     with Session(engine) as session:
         data = []
         now = int(f'{time.time():.0f}')
         my_tools = session.scalars(select(MyTool)).all()
-        my_mbs.update()
         mbs = session.scalars(select(MyMbs)).all()
         for m in mbs:
             if m.next_availability < now:
@@ -51,5 +52,5 @@ def tool_next_time():
                         'template_name': mt.tools.template_name
                     }
                 )
-                print(f'Add {mt.tools.template_name} {mt.asset_id} {mt.owner}')
+                print(f'Next {mt.tools.template_name} {mt.asset_id} {mt.owner}')
     return data

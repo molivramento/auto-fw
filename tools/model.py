@@ -19,6 +19,7 @@ class Tool(Base):
     mints_gold = Column(Float)
     mints_wood = Column(Float)
     charged_time = Column(Integer)
+
     my_tools = relationship('MyTool', back_populates='tools')
 
 

@@ -15,7 +15,7 @@ def verify_durability():
     with Session(engine) as session:
         my_tools = session.scalars(select(MyTool)).all()
         for mt in my_tools:
-            if mt.current_durability < mt.durability * 0.1:
+            if mt.current_durability <= mt.durability * 0.1:
                 print(f'{mt.asset_id} - {mt.tools.template_name} {mt.current_durability}/{mt.durability} restoring...')
                 name = 'repair'
                 data = {'asset_owner': mt.owner, 'asset_id': mt.asset_id}

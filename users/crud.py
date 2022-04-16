@@ -1,54 +1,47 @@
 from api import Request
-from users.model import User, Energy, Balance
+from users.model import User
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from database import engine
-from utils.setup import api
+from utils.setup import api, contract
 
-c = Request(api, 'farmersworld')
+c = Request(api, contract)
 
 
 class Users:
-    def __init__(self):
-        self.response = c.fetch(table='accounts', user='molivramento')
-
     def create(self):
-        for r in self.response['rows']:
-            with Session(engine) as session:
-                balance = Users.balances(self)
-                user = User(account=r['account'],
-                            energies=[Energy(energy=r['energy'],
-                                             max_energy=r['max_energy'])],
-                            balances=[Balance(wood=balance.get('WOOD'),
-                                              gold=balance.get('GOLD'),
-                                              food=balance.get('FOOD'))])
+        with Session(engine) as session:
+            response = c.fetch(table='accounts', user='molivramento')
+            for r in response['rows']:
                 try:
+                    session.scalars(select(User).where(User.account == r['account'])).one()
+                except:
+                    balances = Users.balances(self, r['account'])
+                    user = User(account=r['account'],
+                                energy=r['energy'],
+                                max_energy=r['max_energy'],
+                                wood=balances.get('WOOD'),
+                                gold=balances.get('GOLD'),
+                                food=balances.get('FOOD'))
                     session.add(user)
                     session.commit()
-                    print(f'{r["account"]} add in database')
-                    print(f'Balances: WOOD:{balance.get("WOOD")} GOLD:{balance.get("GOLD")} FOOD:{balance.get("FOOD")}')
-                except:
-                    print(f'{r["account"]} already exists in the data base')
-                    print(f'Balances: WOOD:{balance.get("WOOD")} GOLD:{balance.get("GOLD")} FOOD:{balance.get("FOOD")}')
+                    print(f'{r["account"]} WOOD:{balances.get("WOOD")} GOLD:{balances.get("GOLD")} FOOD:{balances.get("FOOD")}')
 
     def update(self):
-        for r in self.response['rows']:
-            with Session(engine) as session:
-                balance = Users.balances(self)
-                user = session.scalars(select(User)
-                                       .where(User.account == r['account'])).one()
-                energy_id = session.scalars(select(Energy)
-                                            .where(Energy.user_id == user.id)).one()
-                balance_id = session.scalars((select(Balance)
-                                              .where(Balance.user_id == user.id))).one()
-                energy_id.energy = r['energy']
-                balance_id.wood = balance.get('WOOD')
-                balance_id.gold = balance.get('GOLD')
-                balance_id.food = balance.get('FOOD')
-                session.commit()
+        with Session(engine) as session:
+            user = session.scalars(select(User)).all()
+            for u in user:
+                response = c.fetch(table='accounts', user=u.account)
+                balances = Users.balances(self, u.account)
+                for r in response['rows']:
+                    u.energy = r['energy']
+                    u.wood = balances.get('WOOD')
+                    u.gold = balances.get('GOLD')
+                    u.food = balances.get('FOOD')
 
-    def balances(self):
-        for r in self.response['rows']:
+    def balances(self, user):
+        response = c.fetch(table='accounts', user=user)
+        for r in response['rows']:
             balance = {'WOOD': None, 'GOLD': None, 'FOOD': None}
             for b in r['balances']:
                 amount, resource = b.split()
