@@ -47,7 +47,7 @@ class Run:
             asyncio.get_event_loop().run_until_complete(act)
 
     def schedule(self):
-        schedule.every(30).seconds.do(Run.claim, self)
+        schedule.every(60).seconds.do(Run.claim, self)
 
         while True:
             schedule.run_pending()

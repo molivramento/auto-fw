@@ -36,8 +36,8 @@ class Users:
                 for r in response['rows']:
                     u.energy = r['energy']
                     u.wood = balances.get('WOOD')
-                    u.gold = balances.get('GOLD')
                     u.food = balances.get('FOOD')
+                    session.commit()
 
     def balances(self, user):
         response = c.fetch(table='accounts', user=user)

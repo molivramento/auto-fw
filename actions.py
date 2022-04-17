@@ -1,7 +1,6 @@
 import datetime
 import time
-
-from aioeos import EosAccount, EosAction, EosJsonRpc, EosTransaction
+from aioeos import EosAccount, EosAction, EosJsonRpc, EosTransaction, exceptions
 import utils.setup as setup
 from tools.crud import MyTools
 
@@ -30,5 +29,8 @@ class Action:
                       f"{p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards']}")
             else:
                 print(p)
+        except exceptions.EosRpcException:
+            time.sleep(60)
         except Exception as e:
             print(e)
+            time.sleep(60)
