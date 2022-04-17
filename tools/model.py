@@ -33,7 +33,7 @@ class MyTool(Base):
     durability = Column(Integer)
     current_durability = Column(Integer, nullable=True)
     next_availability = Column(Integer, nullable=True)
-    # full_time = Column(Integer, nullable=True)
+    full_time = Column(Integer, nullable=True)
 
     tools = relationship('Tool', back_populates='my_tools')
 
