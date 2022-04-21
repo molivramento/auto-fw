@@ -1,19 +1,26 @@
-import datetime
 import time
 import asyncio
-import schedule
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import datetime
+
 from actions import Action
+
 from database import engine
-from mbs.model import MyMbs
-from tools.model import MyTool
+
 from users.crud import Users
-from mbs.crud import create_mbs_confs, create_my_mbs, delete_my_mbs, update_my_mbs
+
+from tools.model import MyTool
 from tools.crud import ToolConfs, MyTools
+
 from utils.next_action import next_action
 from utils.verify_energy import verify_energy
 from utils.verify_durability import verify_durability
+
+from mbs.model import MyMbs
+from mbs.crud import create_mbs_confs, create_my_mbs, delete_my_mbs, update_my_mbs
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 
 users = Users()
 toolconfs = ToolConfs()
@@ -28,10 +35,7 @@ class Run:
         my_tools.create()
         create_mbs_confs()
         create_my_mbs()
-        try:
-            delete_my_mbs()
-        except:
-            pass
+        delete_my_mbs()
         Run.schedule(self)
 
     def next_time(self):
@@ -68,22 +72,33 @@ class Run:
                 next_item = n_tool
                 name = 'claim'
                 next_time = n_tool.full_time
+                template_name = n_tool.tools.template_name
+                current_durability = n_tool.current_durability
+                durability = n_tool.durability
             else:
                 next_item = n_mbs
                 name = 'mbsclaim'
                 next_time = n_mbs.next_availability
+                template_name = n_mbs.mbs.name
+                current_durability = 0
+                durability = 0
         t = datetime.datetime.fromtimestamp(next_time).strftime('%H:%M:%S')
         n = next_time - time.time()
         if n < 1:
             n = 1
-        print(f'Next action: {t}')
+        print(
+            f'Next action: {t} - '
+            f'{template_name} - '
+            f'{next_item.asset_id} - '
+            f'{current_durability}/'
+            f'{durability}'
+        )
         return {'t': t, 'next_time': next_time, 'name': name, 'next_item': next_item, 'n': n}
 
     def schedule(self):
         while True:
             Run.next_time(self)
             c = Run.calc(self)
-            print(c['t'])
             n = c['n']
             if n > time.time():
                 n = 1
@@ -93,3 +108,6 @@ class Run:
 
 r = Run()
 r.start()
+# if __name__ == '--Main__':
+#     r = Run()
+#     r.start()

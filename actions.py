@@ -29,8 +29,10 @@ class Action:
                       f"{p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards']}")
             else:
                 print(p)
-        except exceptions.EosRpcException:
+        except exceptions.EosRpcException as error:
             time.sleep(60)
+            print(f'Error: {error}')
+            await rpc.sign_and_push_transaction(transaction, keys=[account.key])
         except Exception as e:
             print(e)
             time.sleep(60)

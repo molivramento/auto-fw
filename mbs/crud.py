@@ -66,13 +66,13 @@ def delete_my_mbs():
         my_mbs = session.scalars(select(MyMbs)).all()
         mbs_db = set()
         current_mbs = set()
-        remove = mbs_db - current_mbs
         for m in my_mbs:
             current_mbs.add(m.asset_id)
-            for r in response['rows']:
-                mbs_db.add(r['asset_id'])
-        for rm in remove:
-            rm_id = session.scalars(select(MyMbs)
-                                    .where(MyMbs.asset_id == rm))
-            session.delete(rm_id)
-            session.commit()
+
+        for r in response['rows']:
+            mbs_db.add(int(r['asset_id']))
+
+        for rm in (current_mbs - mbs_db):
+                rm_id = session.scalars(select(MyMbs).where(MyMbs.asset_id == rm)).first()
+                session.delete(rm_id)
+                session.commit()
