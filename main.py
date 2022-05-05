@@ -33,9 +33,11 @@ class Run:
         users.create()
         toolconfs.create()
         my_tools.create()
+        my_tools.delete()
         create_mbs_confs()
         create_my_mbs()
         delete_my_mbs()
+
         Run.schedule(self)
 
     def next_time(self):

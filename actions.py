@@ -17,22 +17,25 @@ class Action:
             name=name,
             authorization=[account.authorization(setup.contract)],
             data=data)
-        transaction = EosTransaction(
-            ref_block_num=block['block_num'] & 65535,
-            ref_block_prefix=block['ref_block_prefix'],
-            actions=[action]
-        )
         try:
-            p = await rpc.sign_and_push_transaction(transaction, keys=[account.key])
-            if name == 'claim':
-                print(f"{datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S')} - "
-                      f"{p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards']}")
-            else:
-                print(p)
-        except exceptions.EosRpcException as error:
-            time.sleep(60)
-            print(f'Error: {error}')
-            await rpc.sign_and_push_transaction(transaction, keys=[account.key])
+            transaction = EosTransaction(
+                ref_block_num=block['block_num'] & 65535,
+                ref_block_prefix=block['ref_block_prefix'],
+                actions=[action]
+            )
+            try:
+                p = await rpc.sign_and_push_transaction(transaction, keys=[account.key])
+                if name == 'claim':
+                    print(f"{datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S')} - "
+                          f"{p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards']}")
+                else:
+                    print(p)
+            except exceptions.EosRpcException as error:
+                time.sleep(60)
+                print(f'Error: {error}')
+                await rpc.sign_and_push_transaction(transaction, keys=[account.key])
+            except Exception as e:
+                print(e)
+                time.sleep(60)
         except Exception as e:
             print(e)
-            time.sleep(60)
