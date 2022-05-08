@@ -37,12 +37,11 @@ class Run:
         create_mbs_confs()
         create_my_mbs()
         delete_my_mbs()
-
         Run.schedule(self)
 
     def next_time(self):
-        update_my_mbs()
         verify_energy()
+        update_my_mbs()
         verify_durability()
         next_action()
 
