@@ -35,6 +35,7 @@ class Users:
                 balances = Users.balances(self, u.account)
                 for r in response['rows']:
                     u.energy = r['energy']
+                    u.max_energy = r['max_energy']
                     u.wood = balances.get('WOOD')
                     u.food = balances.get('FOOD')
                     session.commit()

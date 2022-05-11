@@ -15,7 +15,8 @@ def verify_energy():
         users.update()
         user = session.scalars(select(User)).all()
         for u in user:
-            if u.energy <= u.max_energy * 0.25:
+            print(u.max_energy)
+            if u.energy <= u.max_energy * 0.2:
                 print(f'Energy Status: {u.energy}')
                 name = 'recover'
                 recover_amount = u.max_energy - u.energy - 1

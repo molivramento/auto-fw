@@ -31,6 +31,7 @@ action = Action()
 class Run:
     def start(self):
         users.create()
+        users.update()
         toolconfs.create()
         my_tools.create()
         my_tools.delete()
