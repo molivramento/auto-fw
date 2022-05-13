@@ -28,8 +28,15 @@ class Action:
                 if name == 'claim':
                     print(f"{datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S')} - "
                           f"{p['processed']['action_traces'][0]['inline_traces'][1]['act']['data']['rewards']}")
+                elif name == 'mbsclaim':
+                    try:
+                        print(f"{datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S')} - "
+                              f"{p['processed']['action_traces'][0]['inline_traces'][2]['act']['data']['amount']} "
+                              f"{p['processed']['action_traces'][0]['inline_traces'][3]['act']['data']['bonus_rewards']}")
+                    except Exception as e:
+                        print(e)
                 else:
-                    print(p)
+                    pass
             except exceptions.EosRpcException as error:
                 time.sleep(60)
                 print(f'Error: {error}')
